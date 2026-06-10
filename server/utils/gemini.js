@@ -28,7 +28,6 @@ Respond ONLY with valid JSON in this exact format:
     const result = await model.generateContent(prompt);
     const text = result.response.text();
     
-    // Gemini sometimes wraps JSON in markdown code blocks, strip them
     const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
     const cleanJson = jsonMatch[1].trim();
     

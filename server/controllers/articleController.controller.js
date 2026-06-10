@@ -1,0 +1,17 @@
+import Article from '../models/Article.model.js';
+
+export const getAllArticles = async(req, res)=>{
+    const {ticker} = req.query;
+    const filter = {status: 'processed'};
+
+    if(ticker) filter.tickers = ticker;
+
+    const articles = await Article.find(filter).sort({publishedAt: -1}).limit(50);
+    res.json(articles);
+}
+
+export const getArticleById = async(req, res)=>{
+    const article = await Article.findById(req.params.id);
+    if(!article) return res.status(404).json({error: 'Article not found'});
+    res.json(article);
+}

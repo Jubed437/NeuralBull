@@ -10,7 +10,11 @@ const rssParser = new parser({
 
 
 const feeds = [
+  { url: 'https://cointelegraph.com/rss', source: 'cointelegraph' },
+  { url: 'https://news.bitcoin.com/feed/', source: 'bitcoin_com' },
+  { url: 'https://decrypt.co/feed', source: 'decrypt' },
   { url: 'https://www.reddit.com/r/CryptoCurrency/.rss', source: 'reddit_crypto' },
+  { url: 'https://cryptonews.com/news/feed/', source: 'cryptonews' },
 ];
 
 export const fetchAllFeeds = async()=>{
