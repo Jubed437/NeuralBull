@@ -2,7 +2,7 @@ import Article from '../models/Article.model.js';
 
 export const getAllArticles = async(req, res)=>{
     const {ticker} = req.query;
-    const filter = {status: 'processed'};
+    const filter = {status: 'processed' };
 
     if(ticker) filter.tickers = ticker;
 
@@ -11,7 +11,11 @@ export const getAllArticles = async(req, res)=>{
 }
 
 export const getArticleById = async(req, res)=>{
-    const article = await Article.findById(req.params.id);
-    if(!article) return res.status(404).json({error: 'Article not found'});
-    res.json(article);
+    try {
+        const article = await Article.findById(req.params.id);
+        if(!article) return res.status(404).json({error: 'Article not found'});
+        res.json(article);
+    } catch (err) {
+        res.status(400).json({ error: 'Invalid article ID', message: err.message });
+    }
 }
