@@ -13,7 +13,6 @@ const feeds = [
   { url: 'https://cointelegraph.com/rss', source: 'cointelegraph' },
   { url: 'https://news.bitcoin.com/feed/', source: 'bitcoin_com' },
   { url: 'https://decrypt.co/feed', source: 'decrypt' },
-  { url: 'https://www.reddit.com/r/CryptoCurrency/.rss', source: 'reddit_crypto' },
   { url: 'https://cryptonews.com/news/feed/', source: 'cryptonews' },
 ];
 
@@ -36,11 +35,11 @@ export const fetchAllFeeds = async()=>{
                     console.log(`Article ${ArticleData.guid} saved successfully.`);
                 }catch(err){
                     if(err.code == 11000) continue; // Duplicate entry, skip
-                    console.error("Save Error: ", err.message);
+                    console.error("Article Save Error: ", err.message);
                 }
             }
         }catch(err){
-            console.error(`Error fetching feed ${feed.url}:`, err);
+            console.error(`Article Error while fetching ${feed.url}:`, err);
             continue;
         }
     }

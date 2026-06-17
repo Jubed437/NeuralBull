@@ -40,14 +40,14 @@ export const fetchRedditPosts = async () => {
         
         try {
           await RedditPost.create(postData);
-          console.log(`✓ Saved: ${post.title.substring(0, 50)}...`);
+          console.log(`✓ Saved RedditPost : ${post.title.substring(0, 20)}...`);
         } catch (err) {
           if (err.code === 11000) continue;  // duplicate
-          console.error('Save error:', err.message);
+          console.error('RedditPost Save error:', err.message);
         }
       }
     } catch (err) {
-      console.error(`Failed to fetch r/${sub}:`, err.message);
+      console.error(`RedditPost Failed to fetch r/${sub}:`, err.message);
       continue;
     }
   }
