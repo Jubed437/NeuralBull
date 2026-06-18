@@ -13,13 +13,15 @@ export const processArticle = async(articleId)=>{
             article.summary = analysis.summary;
             article.status = "processed";
             await article.save();
-            console.log(`✓ Article processed By Ollama: ${article.title?.substring(0, 30)}...`);
+            console.log(`✓ Article processed by AI: ${article.title?.substring(0, 30)}...`);
         }catch(err){
             article.status = "failed";
             await article.save();
-            console.error(`✗ Ollama Article error:`, err.message);
+            console.error(`✗ Article analysis error:`, err.message);
+            throw err;
         }
     } catch(err) {
         console.error(`✗ Process error for Article ${articleId}:`, err.message);
+        throw err;
     }
 }

@@ -10,10 +10,12 @@ const app = express();
 app.use(express.json());
 connectDB();
 
+const port = process.env.PORT || 3000;
+
 app.use('/api/articles', articlesRouter);
 app.use('/api/reddit', redditRouter);
 
 
-app.listen(3000, () => {
-    console.log(`Server running on port http://localhost:3000`)
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on port ${port}`)
 })

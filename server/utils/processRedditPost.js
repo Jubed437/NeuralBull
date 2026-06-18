@@ -14,13 +14,15 @@ export const processRedditPost = async(postId)=>{
             post.sentiment = analysis.sentiment;
             post.status = 'processed';
             await post.save();
-            console.log(`✓ Reddit processed By Ollama: ${post.title.substring(0, 30)}...`); 
+            console.log(`✓ Reddit processed by AI: ${post.title.substring(0, 30)}...`); 
         }catch(err){
             post.status = 'failed';
             await post.save();
-            console.error(`✗ Ollama Reddit error:`, err.message);
+            console.error(`✗ Reddit analysis error:`, err.message);
+            throw err;
         }
     } catch(err) {
         console.error(`✗ Process error for Reddit ${postId}:`, err.message);
+        throw err;
     }
 }
