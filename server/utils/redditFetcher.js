@@ -1,48 +1,44 @@
-import axios from 'axios';
 import RedditPost from '../models/RedditPost.model.js';
+import parser from 'rss-parser';
 
 const subreddits = ['CryptoCurrency', 'Bitcoin'];
+const rssParser = new parser({
+  headers: {
+    'User-Agent': 'NeuralBull/1.0 (+https://github.com/Jubed437/NeuralBull)'
+  },
+  timeout: 10000,
+});
 
 export const fetchRedditPosts = async () => {
   for (const sub of subreddits) {
-    const url = `https://www.reddit.com/r/${sub}/top.json?limit=20&t=day`;
+    const url = `https://www.reddit.com/r/${sub}/top/.rss?t=day`;
     
     try {
-      const response = await axios.get(url, {
-        headers: { 
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'DNT': '1',
-          'Connection': 'keep-alive',
-          'Upgrade-Insecure-Requests': '1'
-        },
-        timeout: 10000
-      });
+      const feed = await rssParser.parseURL(url);
+      const posts = feed.items || [];
       
-      const posts = response.data.data.children;
-      
-      for (const { data: post } of posts) {
-        // Skip if no text content
-        if (!post.selftext || post.selftext.trim() === '') continue;
+      for (const post of posts) {
+        const content = post.contentSnippet || post.content || '';
+        if (!content.trim()) continue;
+
+        const postId = post.guid || post.id || post.link;
         
         const postData = {
-          postId: post.id,
+          postId,
           title: post.title,
-          content: post.selftext,
-          score: post.score,
-          url: `https://reddit.com${post.permalink}`,
-          subreddit: post.subreddit,
-          publishedAt: new Date(post.created_utc * 1000),  // convert to milliseconds
+          content,
+          score: Number(post['re:score'] || 0),
+          url: post.link,
+          subreddit: sub,
+          publishedAt: post.isoDate ? new Date(post.isoDate) : new Date(post.pubDate || Date.now()),
           status: 'pending',
         };
         
         try {
           await RedditPost.create(postData);
-          console.log(`✓ Saved RedditPost : ${post.title.substring(0, 20)}...`);
+          console.log(`✓ Saved RedditPost: ${post.title.substring(0, 20)}...`);
         } catch (err) {
-          if (err.code === 11000) continue;  // duplicate
+          if (err.code === 11000) continue;
           console.error('RedditPost Save error:', err.message);
         }
       }
